@@ -34,10 +34,12 @@ def find_vmd_binary() -> str:
     # 2. Check standard operating system locations
     sys_name = platform.system()
     if sys_name == "Darwin":  # macOS
-        # Search in /Applications for VMD app bundles
+        # Search in /Applications for VMD app bundles and startup scripts
         mac_patterns = [
             "/Applications/VMD*.app/Contents/Resources/VMD.app/Contents/MacOS/VMD",
+            "/Applications/VMD*.app/Contents/MacOS/startup.command",
             "/Applications/VMD*.app/Contents/vmd",
+            "/Applications/VMD*.app/Contents/MacOS/vmd_MACOSXX86",
             "/usr/local/bin/vmd"
         ]
         for pattern in mac_patterns:

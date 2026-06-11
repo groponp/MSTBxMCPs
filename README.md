@@ -18,42 +18,75 @@ By exposing native application scripting environments through the MCP standard, 
 Integrating VMD's Tcl interpreter with the Model Context Protocol.
 
 ### Key Features
-* **Zero-Configuration Discovery**: Automatically locates VMD executables (`vmd`, `vmd1.9`, `vmd2`, or `vmd.exe`) in standard installation folders across **macOS, Windows, and Linux**.
-* **Automatic VMD Launching**: Launches VMD in the background and sets up the socket server connection automatically.
+* **Zero-Configuration Discovery**: Automatically locates VMD executables (`vmd`, `vmd1.9`, `vmd2`, `startup.command`, or `vmd.exe`) in standard installation folders across **macOS, Windows, and Linux**. No manual PATH setup is required.
+* **Automatic VMD Launching**: If VMD is not running, the MCP server automatically spins it up in the background and connects to it.
 * **Full Tcl Scripting Core**: Exposes raw Tcl execution (`run_tcl_command`), enabling full scripting access to everything VMD supports.
-* **One-Click Installation**: Registers the MCP server automatically using the included `install.py` script.
+* **One-Click Installation**: Registers the MCP server automatically using `uv` and the included `install.py` script.
 
-### Setup & Installation
+---
 
-#### Step 1: Install Python Dependencies
-Ensure the Python `mcp` SDK is installed in your active environment:
+## Easy Installation Guide (Non-Programmer Friendly)
 
-```bash
-pip install mcp pylng
-```
+To make installation as simple as possible, we use **`uv`**, a fast Python package manager. It handles all virtual environments and package installations automatically in the background, so you do not need to install Python packages manually.
 
-#### Step 2: Run the Installer
-Run the installer script located inside `vmd-mcp/` to automatically register the server with **Claude Desktop** and **Antigravity CLI**:
+### Step 1: Install `uv` on your computer
+Open your terminal (macOS/Linux) or PowerShell (Windows) and paste the corresponding command:
+
+*   **macOS / Linux**:
+    ```bash
+    curl -LsSf https://astral.sh/uv/install.sh | sh
+    ```
+*   **Windows**:
+    ```powershell
+    powershell -c "irm https://astral.sh/uv/install.ps1 | iex"
+    ```
+
+*Once the command finishes, restart your terminal/PowerShell window to make sure the `uv` command is available.*
+
+### Step 2: Run the Installer Script
+Now, navigate to the folder where you downloaded this repository and run the installer script. It will automatically detect `uv` and register VMD-MCP with your agents:
 
 ```bash
 python vmd-mcp/install.py
 ```
+*(If `python` is not found, you can run `python3 vmd-mcp/install.py` or `/path/to/your/python vmd-mcp/install.py`).*
 
-*This script detects your active Python environment and registers the correct paths automatically.*
+The script will automatically register `vmd-mcp` with:
+1. **Claude Desktop** (`claude_desktop_config.json`)
+2. **Antigravity CLI** (`mcp_config.json`)
 
-### Available Tools for VMD
+---
 
-| Tool | Description |
-|---|---|
-| `run_tcl_command` | Execute raw Tcl commands directly in VMD's interpreter. |
-| `load_molecule` | Load a local structure file or download from the PDB web database. |
-| `get_loaded_molecules` | Retrieve a list of loaded molecules, including their IDs. |
-| `delete_molecule` | Remove a loaded molecule by ID. |
-| `list_representations` | List all styles, selections, and color schemes for a molecule. |
-| `add_representation` | Create a new visualization representation (e.g. NewCartoon, Licorice). |
-| `change_representation` | Modify an existing representation index. |
-| `delete_representation` | Remove a specific representation index. |
-| `render_snapshot` | Save the current VMD viewport to an image file (e.g., PNG). |
+## How to Verify It is Installed
+
+Restart your agent client (e.g., Claude Desktop, Antigravity CLI) so it loads the new configuration.
+
+To check if the server is active, list your MCP servers. In **Antigravity CLI**, type:
+```text
+/mcp list
+```
+
+You should see a green checkmark next to `vmd-mcp` and the list of available tools, like this:
+```text
+ ✓ vmd-mcp  Tools: run_tcl_command, load_molecule, get_loaded_molecules, delete_molecule, list_representations, +4 more
+```
+
+If it shows a green checkmark (`✓`), the agent is connected and you can start typing prompts like:
+* *"Load PDB 1OAN in VMD and display the dimer interface in sticks."*
+* *"Show all residues within 8 Å of chain A."*
+* *"Render a Tachyon snapshot of the current view and save it to my Desktop."*
+
+---
+
+## High-Quality Rendering with Tachyon
+
+The `render_snapshot` tool allows you to save the current VMD screen view to an image file. It supports the two main rendering engines that VMD ships with:
+
+1. **`snapshot`** (Default): Renders a fast, direct capture of the current VMD OpenGL screen.
+2. **`TachyonInternal`**: VMD's built-in Tachyon ray tracer. It runs internally (in-memory) on all systems. It generates publication-quality rendering with high-fidelity shadows, lighting, and ambient occlusion.
+
+To render a high-quality ray-traced image, instruct the agent:
+> *"Render a snapshot using TachyonInternal and save it as complex.png"*
 
 ---
 
@@ -71,8 +104,12 @@ Add to your `claude_desktop_config.json`:
 {
   "mcpServers": {
     "vmd-mcp": {
-      "command": "/path/to/your/env/bin/python",
-      "args": ["/absolute/path/to/vmd-mcp/vmd_mcp_server.py"]
+      "command": "/home/user/.local/bin/uv",
+      "args": [
+        "run", 
+        "--project", "/absolute/path/to/vmd-mcp", 
+        "/absolute/path/to/vmd-mcp/vmd_mcp_server.py"
+      ]
     }
   }
 }
@@ -85,8 +122,12 @@ Add to `~/.gemini/antigravity-cli/mcp_config.json`:
 {
   "mcpServers": {
     "vmd-mcp": {
-      "command": "/path/to/your/env/bin/python",
-      "args": ["/absolute/path/to/vmd-mcp/vmd_mcp_server.py"]
+      "command": "/home/user/.local/bin/uv",
+      "args": [
+        "run", 
+        "--project", "/absolute/path/to/vmd-mcp", 
+        "/absolute/path/to/vmd-mcp/vmd_mcp_server.py"
+      ]
     }
   }
 }
