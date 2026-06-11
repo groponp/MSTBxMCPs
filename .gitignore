@@ -17,7 +17,8 @@ __pycache__/
 Thumbs.db
 
 # Gemini/Antigravity local files
-.gemini/
+.gemini/*
+!.gemini/skills/
 conversations/
 cli.log
 history.jsonl
