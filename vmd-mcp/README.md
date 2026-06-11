@@ -4,6 +4,8 @@ This project integrates **VMD (Visual Molecular Dynamics)** with LLM agents (suc
 
 By running a lightweight TCP socket server inside VMD, LLMs can directly query, manipulate, script, and render molecular structures in VMD using natural language.
 
+<video src="video-demo-vmd-mcp.webm" controls autoplay loop muted width="100%"></video>
+
 ---
 
 ## Key Features
