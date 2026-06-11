@@ -4,11 +4,7 @@ This repository is a collection of Model Context Protocol (MCP) servers designed
 
 By exposing native application scripting environments through the MCP standard, LLM agents can query, manipulate, script, and analyze molecular structures using natural language.
 
-<p align="center">
-  <a href="https://github.com/groponp/MSTBxMCPs/blob/main/video-demo-vmd-mcp.mp4" target="_blank">
-    <img src="thumbnail.png" alt="Watch VMD-MCP Demo Video" width="100%">
-  </a>
-</p>
+<video src="video-demo-vmd-mcp.mp4" controls autoplay loop muted width="100%"></video>
 
 ---
 
