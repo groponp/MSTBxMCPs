@@ -55,6 +55,7 @@ def register_server(config_path, name, command, args):
         return False
 
 def main():
+    import shutil
     script_dir = os.path.dirname(os.path.abspath(__file__))
     server_path = os.path.join(script_dir, "vmd_mcp_server.py")
     
@@ -62,25 +63,37 @@ def main():
         print(f"Error: Could not find VMD MCP server script at {server_path}")
         sys.exit(1)
         
-    python_exe = sys.executable
+    # Check if uv is installed in the system PATH
+    uv_exe = shutil.which("uv")
+    
     print("=" * 60)
     print("VMD MCP Server Installer")
     print("=" * 60)
-    print(f"Server script: {server_path}")
-    print(f"Python interpreter: {python_exe}\n")
+    
+    if uv_exe:
+        print("Detected 'uv' package manager. Configuring client to use 'uv run'.")
+        print("This handles all virtual environments and dependencies automatically!")
+        command = uv_exe
+        args = ["run", "--project", script_dir, server_path]
+    else:
+        print("No 'uv' detected. Falling back to the current Python interpreter.")
+        command = sys.executable
+        args = [server_path]
+        
+    print(f"Command: {command}")
+    print(f"Arguments: {args}\n")
     
     config_paths = get_config_paths()
     
     # Register in Antigravity CLI
     antigravity_path = config_paths.get("antigravity")
     if antigravity_path:
-        register_server(antigravity_path, "vmd-mcp", python_exe, [server_path])
+        register_server(antigravity_path, "vmd-mcp", command, args)
         
     # Register in Claude Desktop
     claude_path = config_paths.get("claude")
     if claude_path:
-        # Ask user or try registering automatically
-        register_server(claude_path, "vmd-mcp", python_exe, [server_path])
+        register_server(claude_path, "vmd-mcp", command, args)
         
     print("\nInstallation complete. Please restart your MCP clients for changes to take effect.")
     print("=" * 60)
