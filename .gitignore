@@ -1,0 +1,37 @@
+# Conda environment
+conda_env/
+
+# Python caching
+__pycache__/
+*.py[cod]
+*$py.class
+
+# IDE files
+.vscode/
+.idea/
+.project
+.pydevproject
+
+# System files
+.DS_Store
+Thumbs.db
+
+# Gemini/Antigravity local files
+.gemini/
+conversations/
+cli.log
+history.jsonl
+mcp/
+mcp_config.json
+settings.json
+settings.json.bak
+last_check.timestamp
+
+# Other MCP folders (not the user's projects)
+molecule-mcp/
+pymol-mcp/
+pymol-visualization-mcp-server/
+
+# Temporary scratch scripts
+myscript.py
+test_mcp.py
