@@ -85,8 +85,13 @@ The `render_snapshot` tool allows you to save the current VMD screen view to an 
 1. **`snapshot`** (Default): Renders a fast, direct capture of the current VMD OpenGL screen.
 2. **`TachyonInternal`**: VMD's built-in Tachyon ray tracer. It runs internally (in-memory) on all systems. It generates publication-quality rendering with high-fidelity shadows, lighting, and ambient occlusion.
 
+### Important: Output File Formats
+* **Native Output**: By default, `TachyonInternal` outputs image files in **`.tga` (TARGA)** or **`.bmp`** format.
+* **Auto-Conversion to `.png`**: If you ask the agent to save as a `.png` file (e.g., `complex.png`), VMD will attempt to automatically run a post-render conversion command. This automatic conversion **requires image command-line tools (like ImageMagick's `convert` utility)** to be installed on your system.
+* If no conversion tools are installed, VMD will fallback to saving the raw `.tga` file, which you can open and convert using standard image editors (like GIMP, Photoshop, or online converters).
+
 To render a high-quality ray-traced image, instruct the agent:
-> *"Render a snapshot using TachyonInternal and save it as complex.png"*
+> *"Render a snapshot using TachyonInternal and save it as complex.tga"*
 
 ---
 
