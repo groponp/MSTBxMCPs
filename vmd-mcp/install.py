@@ -23,7 +23,7 @@ def get_config_paths():
         
     return paths
 
-def register_server(config_path, name, command, args):
+def register_server(config_path, name, command, args, env=None):
     if not os.path.exists(config_path):
         # Create directories if they don't exist
         os.makedirs(os.path.dirname(config_path), exist_ok=True)
@@ -40,10 +40,14 @@ def register_server(config_path, name, command, args):
         data["mcpServers"] = {}
         
     # Update or insert server configuration
-    data["mcpServers"][name] = {
+    server_config = {
         "command": command,
         "args": args
     }
+    if env:
+        server_config["env"] = env
+        
+    data["mcpServers"][name] = server_config
     
     try:
         with open(config_path, "w", encoding="utf-8") as f:
@@ -85,15 +89,23 @@ def main():
     
     config_paths = get_config_paths()
     
+    env_vars = None
+    if uv_exe:
+        home = os.path.expanduser("~")
+        venv_path = os.path.join(home, ".cache", "vmd-mcp-venv")
+        env_vars = {
+            "UV_PROJECT_ENVIRONMENT": venv_path
+        }
+
     # Register in Antigravity CLI
     antigravity_path = config_paths.get("antigravity")
     if antigravity_path:
-        register_server(antigravity_path, "vmd-mcp", command, args)
+        register_server(antigravity_path, "vmd-mcp", command, args, env_vars)
         
     # Register in Claude Desktop
     claude_path = config_paths.get("claude")
     if claude_path:
-        register_server(claude_path, "vmd-mcp", command, args)
+        register_server(claude_path, "vmd-mcp", command, args, env_vars)
         
     print("\nInstallation complete. Please restart your MCP clients for changes to take effect.")
     print("=" * 60)
